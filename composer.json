@@ -1,0 +1,13 @@
+{
+    "name": "kote/container",
+    "description": "Light IoC container with dependency injection.",
+    "type": "library",
+    "authors": [
+        {
+            "name": "Roman Gemini",
+            "email": "roman_gemini@ukr.net"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
