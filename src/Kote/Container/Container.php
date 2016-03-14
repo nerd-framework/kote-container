@@ -51,15 +51,23 @@ class Container
         return $this;
     }
 
-    public function bind($id, $provider)
+    public function bind($id, $provider = null)
     {
+        if (is_null($provider)) {
+            $provider = $id;
+        }
+
         $this->storage[$id] = $provider;
 
         return $this;
     }
 
-    public function singleton($id, $provider)
+    public function singleton($id, $provider = null)
     {
+        if (is_null($provider)) {
+            $provider = $id;
+        }
+
         $this->storage[$id] = function () use ($provider)
         {
             static $instance = null;
