@@ -48,7 +48,7 @@ $result = $container->invoke(function ($foo, Bar $other) {
 Pass additional resources into invoke() method:
 
 ```php
-$result = $container->invoke(function ($a, $b) {
-  echo "$a, $b!"
+$result = $container->invoke(function ($foo, $a, $b) {
+  //
 }, ["a" => "Hello", "b" => "World"]);
 ```
