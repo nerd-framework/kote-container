@@ -26,7 +26,7 @@ $container->bind('factroy', function () {
 Bind singleton:
 
 ```php
-$container->bind('singleton', SingletonService::class);
+$container->singleton('single', SingletonService::class);
 ```
 
 Retrieve resources from container:
