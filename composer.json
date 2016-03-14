@@ -11,6 +11,9 @@
     "minimum-stability": "dev",
     "require": {},
     "autoload": {
+        "psr-4": {
+            "Kote\\": "src/Kote/"
+        },
         "files": [
             "src/helper.php"
         ]
