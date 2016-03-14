@@ -39,3 +39,11 @@ $container->invoke([$obj, "method"]);
 // Invoke class constructor
 $container->invoke(\MyClass::class);
 ```
+
+You can access global container using following function:
+
+```php
+$foo = container()->get('foo');
+// or
+$foo = container('foo');
+```
