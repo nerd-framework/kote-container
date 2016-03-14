@@ -26,7 +26,7 @@ $container->singleton('mySingleton', Singleton::class);
 // Bind resource using class name as resource id
 $container->bind(MyInterface::class, MyImplementation::class);
 
-// Bind resource using it's own class name
+// Bind resource using its own class name
 $container->bind(MyService::class);
 
 // Get resources from container
