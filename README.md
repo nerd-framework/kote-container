@@ -12,7 +12,7 @@ $container->bind('foo', function () {
 };
 
 // Bind resource using class name
-$container->bind('bar', \Bar::class);
+$container->bind('bar', Bar::class);
 
 // Any data except callables or class names will be stored in the container as is
 $container->bind('appToken', 'f82d3ae98304278766ca0a80379b1972');
