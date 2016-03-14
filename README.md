@@ -1,79 +1,54 @@
 # kote-container
 Small IoC container with dependency injection.
 
-Examples:
+Get singleton instance of container using function:
 
 ```php
-$container = new \Kote\Container\Container();
+$container = container();
+```
 
-// Bind resource using constructor callback
-$container->bind('foo', function () {
-  return new Foo();
-};
+Bind class constructor:
 
-// Bind resource using class name
-$container->bind('bar', Bar::class);
+```php
+$container->bind('foo', Foo::class);
+$container->bind(Bar::class);
+$container->bind(Baz::class, BazImplementation::class);
+```
 
-// Any data except callables and class names will be stored in the container as is
-$container->bind('appToken', 'f82d3ae98304278766ca0a80379b1972');
+Bind callable factory:
 
-// Bind singleton resource
-$container->singleton('mySingleton', function () {
-  return new Singleton();
+```php
+$container->bind('factroy', function () {
+  return new Factory();
 });
-$container->singleton('mySingleton', Singleton::class);
+```
 
-// Bind resource using class name as resource id
-$container->bind(MyInterface::class, MyImplementation::class);
+Bind singleton:
 
-// Bind resource using its own class name
-$container->bind(MyService::class);
+```php
+$container->bind('singleton', SingletonService::class);
+```
 
-// Get resources from container
+Retrieve resources from container:
+
+```php
 $foo = $container->get('foo');
-$myService = $container->get(MyService::class);
-$token = $container->get('appToken');
-
-// Invoke function with resource injection
-// Using argument names
-$container->invoke(function ($foo, $bar, $appToken) {
-  // All dependencies will be injected using its names
-});
-
-// Using type hinting
-$container->invoke(function (MyInterface $first, MyService $service, $appToken) {
-  // Firstly, container will search resource using type hint. If nothing found it will search
-  // resource using argument name
-});
-
-// Invoke class static method
-$container->invoke([\MyClass::class, "myMethod"]);
-
-// Invoke object method
-$container->invoke([$obj, "method"]);
-
-// Invoke class constructor
-$container->invoke(MyController::class);
+$baz = $container->get(Bar::class);
 ```
 
-If you need global singleton container you can access it using following function:
+Invoke function, class method or class constructor with dependency injection:
 
 ```php
-container();
-
-$foo = container()->get('foo');
-// or
-$foo = container('foo');
+$result = $container->invoke(function ($foo, Bar $other) {
+  // $foo will be injected using parameter name
+  // $other will be injected using Bar type hint
+});
 ```
 
-Using invocation you can pass array with contextual data:
+Pass additional resources into invoke() method:
 
 ```php
-$context = [
-  'hello' => 'World',
-  'test' => 'True',
-  OtherFoo::class
-];
-
-$container->invoke(function ($hello, $test, $foo, OtherFoo $otherFoo) { /* code */ }, $context);
+$result = $container->invoke(function ($a, $b) {
+  echo "$a, $b!"
+}, ["a" => "Hello", "b" => "World"]);
 ```
