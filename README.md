@@ -56,15 +56,17 @@ $container->invoke([$obj, "method"]);
 $container->invoke(MyController::class);
 ```
 
-If you need global container you can always access it using following function:
+If you need global singleton container you can access it using following function:
 
 ```php
+container();
+
 $foo = container()->get('foo');
 // or
 $foo = container('foo');
 ```
 
-Also you can pass array with contextual resources:
+Using invocation you can pass array with contextual data:
 
 ```php
 $context = [
@@ -72,7 +74,6 @@ $context = [
   'test' => 'True',
   OtherFoo::class
 ];
-$container->invoke(function ($hello, $test, $foo, OtherFoo $otherFoo) {
-  // 
-}, $context);
+
+$container->invoke(function ($hello, $test, $foo, OtherFoo $otherFoo) { /* code */ }, $context);
 ```
