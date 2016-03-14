@@ -1,4 +1,4 @@
-# kote/container
+# kote-container
 Small IoC container with dependency injection.
 
 Examples:
