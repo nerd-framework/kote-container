@@ -149,8 +149,8 @@ class Container
     private function getDependencies(array $parameters, array $args = [])
     {
         $instances = [];
-        foreach ($parameters as $index => $parameter) {
-            $instances[] = $this->loadDependency($parameter, $index, $args);
+        foreach ($parameters as $parameter) {
+            $instances[] = $this->loadDependency($parameter, $args);
         }
 
         return $instances;
@@ -158,35 +158,36 @@ class Container
 
     /**
      * @param \ReflectionParameter $parameter
-     * @param $index
      * @param array $args
      * @return object
      * @throws Exception\NotFoundException
      */
-    private function loadDependency(\ReflectionParameter $parameter, $index, array $args)
+    private function loadDependency(\ReflectionParameter $parameter, array $args)
     {
         if (isset($args[$parameter->getName()])) {
             return $args[$parameter->getName()];
         }
 
-        elseif (isset($args[$index])) {
-            return $args[$index];
+        if (!is_null($parameter->getClass())) {
+            $className = $parameter->getClass()->getName();
+            $index = array_search($className, $args);
+            if ($index !== false) {
+                return $args[$index];
+            }
         }
 
-        elseif (!is_null($parameter->getClass()) && $this->has($parameter->getClass()->getName())) {
+        if (!is_null($parameter->getClass()) && $this->has($parameter->getClass()->getName())) {
             return $this->get($parameter->getClass()->getName());
         }
 
-        elseif ($this->has($parameter->getName())) {
+        if ($this->has($parameter->getName())) {
             return $this->get($parameter->getName());
         }
 
-        elseif ($parameter->isDefaultValueAvailable()) {
+        if ($parameter->isDefaultValueAvailable()) {
             return $parameter->getDefaultValue();
         }
 
-        else {
-            throw new Exception\NotFoundException("Object with id {$parameter->getName()} not found in container.");
-        }
+        throw new Exception\NotFoundException("Object with id {$parameter->getName()} not found in container.");
     }
 }
