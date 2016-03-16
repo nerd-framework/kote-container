@@ -9,7 +9,8 @@
 namespace Kote\Container;
 
 
-class Util {
+class Util
+{
     /**
      * @param \ReflectionParameter $parameter
      * @return null|string
