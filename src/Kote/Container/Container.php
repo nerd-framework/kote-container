@@ -5,6 +5,8 @@ namespace Kote\Container;
 
 class Container
 {
+    use ResolverTrait;
+
     /**
      * Storage for all registered services.
      *
@@ -12,11 +14,10 @@ class Container
      */
     private $storage = [];
 
-    public function __construct()
-    {
-
-    }
-
+    /**
+     * @param $id
+     * @return bool
+     */
     public function has($id)
     {
         return isset($this->storage[$id]);
@@ -30,16 +31,28 @@ class Container
     public function get($id)
     {
         if (!$this->has($id)) {
-            throw new Exception\NotFoundException("Resource \"$id\" not found in container.");
+            throw new Exception\NotFoundException("Resource $id not found in container.");
         }
 
-        elseif (is_callable($this->storage[$id])) {
+        if (is_callable($this->storage[$id])) {
             return call_user_func($this->storage[$id]);
         }
 
-        else {
-            return $this->storage[$id];
+        return $this->storage[$id];
+    }
+
+    /**
+     * @param $id
+     * @return object
+     * @throws Exception\NotFoundException
+     */
+    public function getOrResolve($id)
+    {
+        if ($this->has($id)) {
+            return $this->get($id);
         }
+
+        return $this->resolve($id);
     }
 
     public function unbind($id)
@@ -182,6 +195,14 @@ class Container
 
         if ($this->has($parameter->getName())) {
             return $this->get($parameter->getName());
+        }
+
+        if (!is_null($parameter->getClass()) && $this->isResolvable($parameter->getClass()->getName())) {
+            return $this->resolve($parameter->getClass()->getName());
+        }
+
+        if ($this->isResolvable($parameter->getName())) {
+            return $this->resolve($parameter->getName());
         }
 
         if ($parameter->isDefaultValueAvailable()) {
