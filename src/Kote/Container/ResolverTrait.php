@@ -37,6 +37,12 @@ trait ResolverTrait
 
     public function isResolvable($id)
     {
-        return !is_null($this->resolve($id));
+        try {
+            $this->resolve($id);
+            return true;
+        } catch (Exception\NotFoundException $exception) {
+            return false;
+        }
+
     }
 }
