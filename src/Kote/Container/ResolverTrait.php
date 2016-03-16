@@ -16,11 +16,11 @@ trait ResolverTrait
     /**
      * Adds resolver to container resolvers array.
      *
-     * @param null|string $type
      * @param callable $callback
+     * @param null|string $type
      * @return $this
      */
-    public function addResolver($type = null, $callback)
+    public function addResolver($callback, $type = null)
     {
         if (!isset($this->resolvers[$type])) {
             $this->resolvers[$type] = [];
@@ -33,12 +33,12 @@ trait ResolverTrait
     /**
      * Resolves resource using resolvers.
      *
-     * @param null|string $type
      * @param string $id
+     * @param null|string $type
      * @return null|object
      * @throws Exception\NotFoundException
      */
-    public function resolve($type = null, $id)
+    public function resolve($id, $type = null)
     {
         if ($result = $this->retrieveFromCache($type, $id)) {
             return $result;
@@ -57,15 +57,15 @@ trait ResolverTrait
     }
 
     /**
-     * @param null $type
      * @param $id
+     * @param null $type
      * @return bool
      */
-    public function isResolvable($type = null, $id)
+    public function isResolvable($id, $type = null)
     {
         try
         {
-            $this->resolve($type, $id);
+            $this->resolve($id, $type);
             return true;
         }
         catch (Exception\NotFoundException $exception)

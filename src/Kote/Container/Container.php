@@ -43,18 +43,8 @@ class Container
 
     /**
      * @param $id
-     * @return object
-     * @throws Exception\NotFoundException
+     * @return $this
      */
-    public function getOrResolve($id)
-    {
-        if ($this->has($id)) {
-            return $this->get($id);
-        }
-
-        return $this->resolve($id);
-    }
-
     public function unbind($id)
     {
         if ($this->has($id)) {
@@ -64,6 +54,11 @@ class Container
         return $this;
     }
 
+    /**
+     * @param $id
+     * @param null $provider
+     * @return $this
+     */
     public function bind($id, $provider = null)
     {
         if (is_null($provider)) {
@@ -190,10 +185,10 @@ class Container
         }
 
         if ($this->isResolvable(
-            $type = Util::getTypeFromReflectionParameter($parameter),
-            $name = $parameter->getName()
+            $name = $parameter->getName(),
+            $type = Util::getTypeFromReflectionParameter($parameter)
         )) {
-            return $this->resolve($type, $name);
+            return $this->resolve($name, $type);
         }
 
         if ($parameter->isDefaultValueAvailable()) {
