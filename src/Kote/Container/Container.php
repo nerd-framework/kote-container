@@ -177,32 +177,23 @@ class Container
      */
     private function loadDependency(\ReflectionParameter $parameter, array $args)
     {
-        if (isset($args[$parameter->getName()])) {
-            return $args[$parameter->getName()];
+        if (isset($args[$name = $parameter->getName()])) {
+            return $args[$name];
         }
 
-        if (!is_null($parameter->getClass())) {
-            $className = $parameter->getClass()->getName();
-            $index = array_search($className, $args);
-            if ($index !== false) {
-                return $args[$index];
-            }
+        if (not_null($class = $parameter->getClass()) && $this->has($class->getName())) {
+            return $this->get($class->getName());
         }
 
-        if (!is_null($parameter->getClass()) && $this->has($parameter->getClass()->getName())) {
-            return $this->get($parameter->getClass()->getName());
+        if ($this->has($name = $parameter->getName())) {
+            return $this->get($name);
         }
 
-        if ($this->has($parameter->getName())) {
-            return $this->get($parameter->getName());
-        }
-
-        if (!is_null($parameter->getClass()) && $this->isResolvable($parameter->getClass()->getName())) {
-            return $this->resolve($parameter->getClass()->getName());
-        }
-
-        if ($this->isResolvable($parameter->getName())) {
-            return $this->resolve($parameter->getName());
+        if ($this->isResolvable(
+            $type = Util::getTypeFromReflectionParameter($parameter),
+            $name = $parameter->getName()
+        )) {
+            return $this->resolve($type, $name);
         }
 
         if ($parameter->isDefaultValueAvailable()) {

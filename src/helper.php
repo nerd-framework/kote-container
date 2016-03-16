@@ -22,3 +22,15 @@ if (!function_exists("container"))
         return $instance;
     }
 }
+
+if (!function_exists("not_null"))
+{
+    /**
+     * @param $var
+     * @return bool
+     */
+    function not_null($var)
+    {
+        return ! is_null($var);
+    }
+}
