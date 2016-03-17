@@ -14,7 +14,7 @@ trait ResolverTrait
     private $resolvers = [];
 
     /**
-     * Adds resolver to container resolvers array.
+     * Adds resolver to resolvers array.
      *
      * @param callable $callback
      * @param null|string $type

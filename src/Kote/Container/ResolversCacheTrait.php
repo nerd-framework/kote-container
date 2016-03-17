@@ -9,8 +9,8 @@
 namespace Kote\Container;
 
 
-trait ResolversCacheTrait {
-
+trait ResolversCacheTrait
+{
     /**
      * Cache for resolved resources.
      *
