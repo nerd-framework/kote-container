@@ -58,7 +58,7 @@ $result = $container->invoke(function ($foo, $a, $b) {
 Add resource resolver:
 
 ```php
-$container->addResolver(function ($id, $type, $container) {
+$container->addResolver(function ($id, $container) {
     return new $type($id);
 }, SomeClass::class);
 ```

@@ -48,7 +48,7 @@ trait ResolverTrait
 
         if (array_key_exists($type, $this->resolvers)) {
             foreach ($this->resolvers[$type] as $resolver) {
-                if (!is_null($result = $resolver($id, $type, $this))) {
+                if (!is_null($result = $resolver($id, $this))) {
                     $this->storeToCache($type, $id, $result);
                     return $result;
                 }
