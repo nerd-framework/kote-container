@@ -38,13 +38,15 @@ trait ResolverTrait
      * @return null|object
      * @throws Exception\NotFoundException
      */
-    public function resolve($id, $type = null)
+    protected function resolve($id, $type = null)
     {
-        if ($result = $this->retrieveFromCache($type, $id)) {
+        $result = $this->retrieveFromCache($type, $id);
+
+        if (isset($result)) {
             return $result;
         }
 
-        if (isset($this->resolvers[$type])) {
+        if (array_key_exists($type, $this->resolvers)) {
             foreach ($this->resolvers[$type] as $resolver) {
                 if (!is_null($result = $resolver($id, $type, $this))) {
                     $this->storeToCache($type, $id, $result);
@@ -61,7 +63,7 @@ trait ResolverTrait
      * @param null $type
      * @return bool
      */
-    public function isResolvable($id, $type = null)
+    protected function isResolvable($id, $type = null)
     {
         try
         {

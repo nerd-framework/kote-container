@@ -172,22 +172,25 @@ class Container
      */
     private function loadDependency(\ReflectionParameter $parameter, array $args)
     {
-        if (isset($args[$name = $parameter->getName()])) {
+        $name = $parameter->getName();
+
+        if (isset($args[$name])) {
             return $args[$name];
         }
 
-        if (not_null($class = $parameter->getClass()) && $this->has($class->getName())) {
+        $class = $parameter->getClass();
+
+        if (isset($class) && $this->has($class->getName())) {
             return $this->get($class->getName());
         }
 
-        if ($this->has($name = $parameter->getName())) {
+        if ($this->has($name)) {
             return $this->get($name);
         }
 
-        if ($this->isResolvable(
-            $name = $parameter->getName(),
-            $type = Util::getTypeFromReflectionParameter($parameter)
-        )) {
+        $type = Util::getTypeFromReflectionParameter($parameter);
+
+        if ($this->isResolvable($name, $type)) {
             return $this->resolve($name, $type);
         }
 
@@ -195,6 +198,8 @@ class Container
             return $parameter->getDefaultValue();
         }
 
-        throw new Exception\NotFoundException("Object with id {$parameter->getName()} not found in container.");
+        throw new Exception\NotFoundException(
+            "Object with id {$parameter->getName()} not found in container."
+        );
     }
 }

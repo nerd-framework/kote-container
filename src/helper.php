@@ -1,16 +1,16 @@
 <?php
 
-if (!function_exists("container"))
+if (!function_exists("app"))
 {
     /**
      * @param null $id
      * @return \Kote\Container\Container|object
      * @throws \Kote\Container\Exception\NotFoundException
      */
-    function container($id = null)
+    function app($id = null)
     {
-        if (!is_null($id)) {
-            return container()->get($id);
+        if (isset($id)) {
+            return app()->get($id);
         }
 
         static $instance = null;
@@ -23,14 +23,3 @@ if (!function_exists("container"))
     }
 }
 
-if (!function_exists("not_null"))
-{
-    /**
-     * @param $var
-     * @return bool
-     */
-    function not_null($var)
-    {
-        return ! is_null($var);
-    }
-}

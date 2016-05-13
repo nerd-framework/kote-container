@@ -1,10 +1,12 @@
 # kote-container
 Small IoC container with dependency injection.
 
-Get singleton instance of container using function:
+Get the container:
 
 ```php
-$container = container();
+$container = new \Kote\Container\Container();
+// or singleton
+$container = app();
 ```
 
 Bind class constructor:
@@ -18,7 +20,7 @@ $container->bind(Baz::class, BazImplementation::class);
 Bind callable factory:
 
 ```php
-$container->bind('factroy', function () {
+$container->bind('factory', function () {
   return new Factory();
 });
 ```
@@ -52,3 +54,12 @@ $result = $container->invoke(function ($foo, $a, $b) {
   //
 }, ["a" => "Hello", "b" => "World"]);
 ```
+
+Add resource resolver:
+
+```php
+$container->addResolver(function ($id, $type, $container) {
+    return new $type($id);
+}, SomeClass::class);
+```
+
