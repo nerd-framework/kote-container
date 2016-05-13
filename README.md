@@ -5,8 +5,8 @@ Get the container:
 
 ```php
 $container = new \Kote\Container\Container();
-// or singleton
-$container = app();
+// or get singleton container instance
+$container = container();
 ```
 
 Bind class constructor:
