@@ -3,9 +3,15 @@
 namespace Kote\Container;
 
 
-class Container
+
+class Container implements Contracts\Container
 {
     use ResolverTrait;
+
+    /**
+     * @var Contracts\Container
+     */
+    private static $instance;
 
     /**
      * Storage for all registered services.
@@ -70,6 +76,11 @@ class Container
         return $this;
     }
 
+    /**
+     * @param string $id
+     * @param null $provider
+     * @return $this
+     */
     public function singleton($id, $provider = null)
     {
         if (is_null($provider)) {
@@ -90,6 +101,11 @@ class Container
         return $this;
     }
 
+    /**
+     * @param $callable
+     * @param array $args
+     * @return $this
+     */
     public function invoke($callable, array $args = [])
     {
         if (is_array($callable) && count($callable) == 2) {
