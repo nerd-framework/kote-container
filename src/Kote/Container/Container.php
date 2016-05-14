@@ -224,7 +224,7 @@ class Container implements Contracts\Container
      */
     public static function setInstance(Contracts\Container $container)
     {
-        static::$instance = $container;
+        self::$instance = $container;
     }
 
     /**
@@ -232,6 +232,6 @@ class Container implements Contracts\Container
      */
     public static function getInstance()
     {
-        return static::$instance;
+        return self::$instance;
     }
 }
