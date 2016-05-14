@@ -218,4 +218,20 @@ class Container implements Contracts\Container
             "Object with id {$parameter->getName()} not found in container."
         );
     }
+
+    /**
+     * @param Contracts\Container $container
+     */
+    public static function setInstance(Contracts\Container $container)
+    {
+        static::$instance = $container;
+    }
+
+    /**
+     * @return Contracts\Container
+     */
+    public static function getInstance()
+    {
+        return static::$instance;
+    }
 }
