@@ -102,6 +102,25 @@ class Container implements Contracts\Container
     }
 
     /**
+     * @param string $id
+     * @param null $provider
+     * @return $this
+     */
+    public function factory($id, $provider = null)
+    {
+        if (is_null($provider)) {
+            $provider = $id;
+        }
+
+        $this->storage[$id] = function () use ($provider)
+        {
+            return $this->invoke($provider);
+        };
+
+        return $this;
+    }
+
+    /**
      * @param $callable
      * @param array $args
      * @return $this
