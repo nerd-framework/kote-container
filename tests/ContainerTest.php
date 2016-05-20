@@ -14,6 +14,37 @@ class ContainerTest extends PHPUnit_Framework_TestCase
         $this->assertInstanceOf(\Kote\Container\Container::class, $container);
     }
 
+    public function testMainContainerFlow()
+    {
+        $container = new \Kote\Container\Container();
+
+        $this->assertFalse($container->has('foo'));
+
+        $container->bind('foo', 'bar');
+
+        $this->assertTrue($container->has('foo'));
+
+        $bar = $container->get('foo');
+
+        $this->assertEquals('bar', $bar);
+
+        $container->unbind('foo');
+
+        $this->assertFalse($container->has('foo'));
+    }
+
+    /**
+     * @expectedException \Kote\Container\Exception\NotFoundException
+     */
+    public function testResourceNotFound()
+    {
+        $this->setExpectedExceptionFromAnnotation();
+
+        $container = new \Kote\Container\Container();
+
+        $container->get('somethingThatNotExist');
+    }
+
     public function testAddingSingleton()
     {
         $counter = 0;
@@ -72,10 +103,67 @@ class ContainerTest extends PHPUnit_Framework_TestCase
 
         $this->assertSame($foobar, $container->get('foobar'));
     }
+
+    public function testDependencyInjection()
+    {
+        $container = new \Kote\Container\Container();
+
+        $container->bind('foo', 'bar');
+        $container->bind('hello', 'world');
+
+        $args = ['temp' => 'baz'];
+
+        $result = $container->invoke(function ($foo, $hello, $temp) {
+
+            return "$foo-$hello-$temp";
+
+        }, $args);
+
+        $this->assertEquals('bar-world-baz', $result);
+
+        /**
+         * @var HelloWorld $helloWorld
+         */
+        
+        $helloWorld = $container->invoke(HelloWorld::class);
+
+        $this->assertInstanceOf(HelloWorld::class, $helloWorld);
+
+        $this->assertEquals('bar', $helloWorld->getFoo());
+    }
+
+    public function testSettingGlobalInstance()
+    {
+        $container = new \Kote\Container\Container();
+
+        $container::setInstance($container);
+    }
+
+    public function testGettingGlobalInstance()
+    {
+        $container = \Kote\Container\Container::getInstance();
+
+        $this->assertInstanceOf(\Kote\Container\Container::class, $container);
+    }
 }
 
 
 class FooBar
 {
     //
+}
+
+class HelloWorld
+{
+    private $foo;
+
+    public function __construct($foo)
+    {
+        $this->foo = $foo;
+    }
+
+    public function getFoo()
+    {
+        return $this->foo;
+    }
 }
