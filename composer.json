@@ -19,5 +19,8 @@
         "psr-4": {
             "Kote\\": "src/Kote/"
         }
+    },
+    "scripts": {
+        "test": ["phpunit"]
     }
 }
