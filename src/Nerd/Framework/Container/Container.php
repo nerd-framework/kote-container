@@ -67,10 +67,6 @@ class Container implements Contracts\Container
      */
     public function bind($id, $provider = null)
     {
-        if (is_null($provider)) {
-            $provider = $id;
-        }
-
         $this->storage[$id] = $provider;
 
         return $this;

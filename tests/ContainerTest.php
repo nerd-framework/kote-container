@@ -57,12 +57,15 @@ class ContainerTest extends TestCase
         $container->singleton('bar', function () use (&$counter) {
             return ++$counter;
         });
+        $container->singleton(FooBar::class);
 
         $foo1 = $container->get('foo');
         $foo2 = $container->get('foo');
+        $foo3 = $container->get(FooBar::class);
 
         $this->assertInstanceOf(FooBar::class, $foo1);
         $this->assertInstanceOf(FooBar::class, $foo2);
+        $this->assertInstanceOf(FooBar::class, $foo3);
 
         $this->assertSame($foo1, $foo2);
 
@@ -83,12 +86,15 @@ class ContainerTest extends TestCase
         $container->factory('bar', function () use (&$counter) {
             return ++$counter;
         });
+        $container->factory(FooBar::class);
 
         $foo1 = $container->get('foo');
         $foo2 = $container->get('foo');
+        $foo3 = $container->get(FooBar::class);
 
         $this->assertInstanceOf(FooBar::class, $foo1);
         $this->assertInstanceOf(FooBar::class, $foo2);
+        $this->assertInstanceOf(FooBar::class, $foo3);
 
         $this->assertNotSame($foo1, $foo2);
 
