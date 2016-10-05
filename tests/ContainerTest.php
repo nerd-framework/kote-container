@@ -174,4 +174,20 @@ class ContainerTest extends TestCase
 
         $container->get('something');
     }
+
+    public function testClassConstructorAndMethodCall()
+    {
+        $container = new Container();
+
+        $container->bind('foo', 'bar');
+        $container->factory(HelloWorld::class);
+
+        $bar = $container->invoke(FooBar::class);
+
+        list($helloWorld, $foo, $other) = $container->invoke([$bar, "call"]);
+
+        $this->assertInstanceOf(HelloWorld::class, $helloWorld);
+        $this->assertEquals('bar', $foo);
+        $this->assertEquals($other, 10);
+    }
 }
