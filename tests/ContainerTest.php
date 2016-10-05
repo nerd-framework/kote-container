@@ -105,7 +105,7 @@ class ContainerTest extends TestCase
         $this->assertEquals(2, $bar2);
     }
 
-    public function testAddingBindings()
+    public function testAddBindings()
     {
         $container = new Container();
 
@@ -163,16 +163,6 @@ class ContainerTest extends TestCase
             return $foo;
         });
         $this->assertEquals("bar", $result);
-    }
-
-    /**
-     * @expectedException \Nerd\Framework\Container\Exceptions\NotFoundException
-     */
-    public function testNotFoundException()
-    {
-        $container = new Container();
-
-        $container->get('something');
     }
 
     public function testClassConstructorAndMethodCall()

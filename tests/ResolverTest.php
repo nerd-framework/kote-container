@@ -49,30 +49,4 @@ class ResolverTest extends TestCase
 
         $this->assertSame($result1, $result2);
     }
-
-    /**
-     * @expectedException \Nerd\Framework\Container\Exceptions\NotFoundException
-     */
-    public function testBadCase1()
-    {
-        $container = new Container();
-
-        $container->addResolver(function () {
-            return null;
-        }, 'bad');
-
-        $container->invoke(function ($bad) {
-        });
-    }
-
-    /**
-     * @expectedException \Nerd\Framework\Container\Exceptions\NotFoundException
-     */
-    public function testBadCase2()
-    {
-        $container = new Container();
-
-        $container->invoke(function ($crash) {
-        });
-    }
 }
