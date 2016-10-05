@@ -1,8 +1,8 @@
 <?php
 
-namespace Kote\Container;
+namespace Nerd\Framework\Container;
 
-
+use Nerd\Framework\Container\Exceptions\NotFoundException;
 
 class Container implements Contracts\Container
 {
@@ -26,18 +26,18 @@ class Container implements Contracts\Container
      */
     public function has($id)
     {
-        return isset($this->storage[$id]);
+        return array_key_exists($id, $this->storage);
     }
 
     /**
      * @param $id
      * @return object
-     * @throws Exception\NotFoundException
+     * @throws \Nerd\Framework\Container\Exceptions\NotFoundException
      */
     public function get($id)
     {
         if (!$this->has($id)) {
-            throw new Exception\NotFoundException("Resource $id not found in container.");
+            throw new NotFoundException("Resource $id not found in container.");
         }
 
         if (is_callable($this->storage[$id])) {
@@ -87,8 +87,7 @@ class Container implements Contracts\Container
             $provider = $id;
         }
 
-        $this->storage[$id] = function () use ($provider)
-        {
+        $this->storage[$id] = function () use ($provider) {
             static $instance = null;
 
             if (is_null($instance)) {
@@ -112,8 +111,7 @@ class Container implements Contracts\Container
             $provider = $id;
         }
 
-        $this->storage[$id] = function () use ($provider)
-        {
+        $this->storage[$id] = function () use ($provider) {
             return $this->invoke($provider);
         };
 
@@ -187,23 +185,20 @@ class Container implements Contracts\Container
      * @param \ReflectionParameter[] $parameters
      * @param array $args
      * @return object[]
-     * @throws Exception\NotFoundException
+     * @throws NotFoundException
      */
     private function getDependencies(array $parameters, array $args = [])
     {
-        $instances = [];
-        foreach ($parameters as $parameter) {
-            $instances[] = $this->loadDependency($parameter, $args);
-        }
-
-        return $instances;
+        return array_map(function ($parameter) use ($args) {
+            return $this->loadDependency($parameter, $args);
+        }, $parameters);
     }
 
     /**
      * @param \ReflectionParameter $parameter
      * @param array $args
      * @return object
-     * @throws Exception\NotFoundException
+     * @throws NotFoundException
      */
     private function loadDependency(\ReflectionParameter $parameter, array $args)
     {
@@ -233,9 +228,7 @@ class Container implements Contracts\Container
             return $parameter->getDefaultValue();
         }
 
-        throw new Exception\NotFoundException(
-            "Object with id {$parameter->getName()} not found in container."
-        );
+        throw new NotFoundException("Object with id {$parameter->getName()} not found in container.");
     }
 
     /**

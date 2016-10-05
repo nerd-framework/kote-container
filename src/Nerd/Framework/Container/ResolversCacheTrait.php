@@ -6,7 +6,7 @@
  * Time: 17:58
  */
 
-namespace Kote\Container;
+namespace Nerd\Framework\Container;
 
 
 trait ResolversCacheTrait

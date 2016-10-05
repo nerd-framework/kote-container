@@ -1,15 +1,10 @@
 <?php
 
-/**
- * @author Roman Gemini <roman_gemini@ukr.net>
- * @date 20.05.2016
- * @time 16:27
- */
 class ResolverTest extends PHPUnit_Framework_TestCase
 {
     public function testAddingResolver()
     {
-        $container = new \Kote\Container\Container();
+        $container = new \Nerd\Framework\Container\Container();
 
         $container->addResolver(function ($id) {
 
@@ -28,7 +23,7 @@ class ResolverTest extends PHPUnit_Framework_TestCase
 
     public function testResolverCache()
     {
-        $container = new \Kote\Container\Container();
+        $container = new \Nerd\Framework\Container\Container();
 
         $container->addResolver(function ($id) {
 

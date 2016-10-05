@@ -1,22 +1,17 @@
 <?php
-/**
- * @author Roman Gemini <roman_gemini@ukr.net>
- * @date 20.05.2016
- * @time 15:17
- */
 
 class ContainerTest extends PHPUnit_Framework_TestCase
 {
     public function testContainerInstantiation()
     {
-        $container = new \Kote\Container\Container();
+        $container = new \Nerd\Framework\Container\Container();
 
-        $this->assertInstanceOf(\Kote\Container\Container::class, $container);
+        $this->assertInstanceOf(\Nerd\Framework\Container\Container::class, $container);
     }
 
     public function testMainContainerFlow()
     {
-        $container = new \Kote\Container\Container();
+        $container = new \Nerd\Framework\Container\Container();
 
         $this->assertFalse($container->has('foo'));
 
@@ -34,22 +29,22 @@ class ContainerTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException \Kote\Container\Exception\NotFoundException
+     * @expectedException \Nerd\Framework\Container\Exceptions\NotFoundException
      */
     public function testResourceNotFound()
     {
         $this->setExpectedExceptionFromAnnotation();
 
-        $container = new \Kote\Container\Container();
+        $container = new \Nerd\Framework\Container\Container();
 
-        $container->get('somethingThatNotExist');
+        $container->get('somethingThatDoesNotExist');
     }
 
     public function testAddingSingleton()
     {
         $counter = 0;
 
-        $container = new \Kote\Container\Container();
+        $container = new \Nerd\Framework\Container\Container();
 
         $container->singleton('foo', FooBar::class);
         $container->singleton('bar', function () use (&$counter) { return ++ $counter; });
@@ -73,7 +68,7 @@ class ContainerTest extends PHPUnit_Framework_TestCase
     {
         $counter = 0;
 
-        $container = new \Kote\Container\Container();
+        $container = new \Nerd\Framework\Container\Container();
 
         $container->factory('foo', FooBar::class);
         $container->factory('bar', function () use (&$counter) { return ++ $counter; });
@@ -95,7 +90,7 @@ class ContainerTest extends PHPUnit_Framework_TestCase
 
     public function testAddingBindings()
     {
-        $container = new \Kote\Container\Container();
+        $container = new \Nerd\Framework\Container\Container();
 
         $foobar = new FooBar();
 
@@ -106,7 +101,7 @@ class ContainerTest extends PHPUnit_Framework_TestCase
 
     public function testDependencyInjection()
     {
-        $container = new \Kote\Container\Container();
+        $container = new \Nerd\Framework\Container\Container();
 
         $container->bind('foo', 'bar');
         $container->bind('hello', 'world');
@@ -134,16 +129,16 @@ class ContainerTest extends PHPUnit_Framework_TestCase
 
     public function testSettingGlobalInstance()
     {
-        $container = new \Kote\Container\Container();
+        $container = new \Nerd\Framework\Container\Container();
 
         $container::setInstance($container);
     }
 
     public function testGettingGlobalInstance()
     {
-        $container = \Kote\Container\Container::getInstance();
+        $container = \Nerd\Framework\Container\Container::getInstance();
 
-        $this->assertInstanceOf(\Kote\Container\Container::class, $container);
+        $this->assertInstanceOf(\Nerd\Framework\Container\Container::class, $container);
     }
 }
 

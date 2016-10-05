@@ -1,7 +1,6 @@
 <?php
 
-namespace Kote\Container\Exception;
-
+namespace Nerd\Framework\Container\Exceptions;
 
 class NotFoundException extends \Exception
 {

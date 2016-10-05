@@ -1,12 +1,6 @@
 <?php
-/**
- * @author Roman Gemini <roman_gemini@ukr.net>
- * @date 13.05.16
- * @time 21:10
- */
 
-namespace Kote\Container\Contracts;
-
+namespace Nerd\Framework\Container\Contracts;
 
 interface Container
 {
@@ -19,7 +13,7 @@ interface Container
     /**
      * @param string $id
      * @return object
-     * @throws \Kote\Container\Exception\NotFoundException
+     * @throws \Nerd\Framework\Container\Exceptions\NotFoundException
      */
     public function get($id);
 

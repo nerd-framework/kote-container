@@ -1,6 +1,8 @@
 <?php
 
-namespace Kote\Container;
+namespace Nerd\Framework\Container;
+
+use Nerd\Framework\Container\Exceptions\NotFoundException;
 
 trait ResolverTrait
 {
@@ -36,7 +38,7 @@ trait ResolverTrait
      * @param string $id
      * @param null|string $type
      * @return null|object
-     * @throws Exception\NotFoundException
+     * @throws \Nerd\Framework\Container\Exceptions\NotFoundException
      */
     protected function resolve($id, $type = null)
     {
@@ -55,7 +57,7 @@ trait ResolverTrait
             }
         }
 
-        throw new Exception\NotFoundException("Resource $id with type $type could not be resolved.");
+        throw new NotFoundException("Resource $id with type $type could not be resolved.");
     }
 
     /**
@@ -65,16 +67,11 @@ trait ResolverTrait
      */
     protected function isResolvable($id, $type = null)
     {
-        try
-        {
+        try {
             $this->resolve($id, $type);
             return true;
+        } catch (NotFoundException $exception) {
+            return false;
         }
-        catch (Exception\NotFoundException $exception)
-        {
-            // NOP
-        }
-
-        return false;
     }
 }
