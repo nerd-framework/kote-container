@@ -189,5 +189,11 @@ class ContainerTest extends TestCase
         $this->assertInstanceOf(HelloWorld::class, $helloWorld);
         $this->assertEquals('bar', $foo);
         $this->assertEquals($other, 10);
+
+        $static = $container->invoke([FooBar::class, 'callStatic']);
+        $instance = $container->invoke([FooBar::class, 'callInstance']);
+
+        $this->assertEquals('static', $static);
+        $this->assertEquals('instance', $instance);
     }
 }

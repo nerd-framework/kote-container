@@ -8,4 +8,14 @@ class FooBar
     {
         return [$hello, $foo, $other];
     }
+
+    public static function callStatic()
+    {
+        return 'static';
+    }
+
+    public function callInstance()
+    {
+        return 'instance';
+    }
 }
