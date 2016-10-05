@@ -54,7 +54,7 @@ class Container implements Contracts\Container
     public function unbind($id)
     {
         if ($this->has($id)) {
-            unset ($this->storage[$id]);
+            unset($this->storage[$id]);
         }
 
         return $this;

@@ -21,7 +21,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Nerd\\": "src/Nerd/"
+            "Nerd\\": "src/Nerd/",
+            "tests\\": "tests/"
         }
     }
 }

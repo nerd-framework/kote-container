@@ -1,10 +1,14 @@
-# kote-container
+# nerd-container
+[![Build Status](https://travis-ci.org/nerd-framework/nerd-container.svg?branch=master)](https://travis-ci.org/nerd-framework/nerd-container)
+[![Coverage Status](https://coveralls.io/repos/github/nerd-framework/nerd-container/badge.svg?branch=master)](https://coveralls.io/github/nerd-framework/nerd-container?branch=master)
+
 Small IoC container with dependency injection.
+
 
 Get the container:
 
 ```php
-$container = new \Kote\Container\Container();
+$container = new \Nerd\Framework\Container\Container();
 ```
 
 Bind class constructor:
@@ -60,4 +64,3 @@ $container->addResolver(function ($id, $container) {
     return new $type($id);
 }, SomeClass::class);
 ```
-

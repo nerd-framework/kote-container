@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Roman
- * Date: 16.03.16
- * Time: 17:58
- */
 
 namespace Nerd\Framework\Container;
-
 
 trait ResolversCacheTrait
 {
@@ -51,5 +44,4 @@ trait ResolversCacheTrait
 
         return $this;
     }
-
 }
