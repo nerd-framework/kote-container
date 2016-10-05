@@ -57,10 +57,21 @@ class ResolverTest extends TestCase
     {
         $container = new Container();
 
-        $container->addResolver(function ($id) {
+        $container->addResolver(function () {
             return null;
         }, 'bad');
 
         $container->get('bad');
+    }
+
+    /**
+     * @expectedException \Nerd\Framework\Container\Exceptions\NotFoundException
+     */
+    public function testBadCase2()
+    {
+        $container = new Container();
+
+        $container->invoke(function ($crash) {
+        });
     }
 }
