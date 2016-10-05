@@ -61,7 +61,8 @@ class ResolverTest extends TestCase
             return null;
         }, 'bad');
 
-        $container->get('bad');
+        $container->invoke(function ($bad) {
+        });
     }
 
     /**
