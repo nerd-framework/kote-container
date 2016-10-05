@@ -25,10 +25,10 @@ interface Container
 
     /**
      * @param string $id
-     * @param null $provider
+     * @param mixed $resource
      * @return $this
      */
-    public function bind($id, $provider = null);
+    public function bind($id, $resource);
 
     /**
      * @param string $id
@@ -36,6 +36,13 @@ interface Container
      * @return $this
      */
     public function singleton($id, $provider = null);
+
+    /**
+     * @param string $id
+     * @param null $provider
+     * @return $this
+     */
+    public function factory($id, $provider = null);
 
     /**
      * @param $callable

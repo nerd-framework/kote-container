@@ -40,11 +40,7 @@ class Container implements Contracts\Container
             throw new NotFoundException("Resource $id not found in container.");
         }
 
-        if (is_callable($this->storage[$id])) {
-            return call_user_func($this->storage[$id]);
-        }
-
-        return $this->storage[$id];
+        return call_user_func($this->storage[$id]);
     }
 
     /**
@@ -61,13 +57,15 @@ class Container implements Contracts\Container
     }
 
     /**
-     * @param $id
-     * @param null $provider
+     * @param string $id
+     * @param mixed $resource
      * @return $this
      */
-    public function bind($id, $provider = null)
+    public function bind($id, $resource)
     {
-        $this->storage[$id] = $provider;
+        $this->storage[$id] = function () use ($resource) {
+            return $resource;
+        };
 
         return $this;
     }
