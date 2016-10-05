@@ -6,14 +6,12 @@ class Util
 {
     /**
      * @param \ReflectionParameter $parameter
-     * @return null|string
+     * @return string
      */
     public static function getTypeFromReflectionParameter(\ReflectionParameter $parameter)
     {
-        if (is_null($class = $parameter->getClass())) {
-            return null;
-        }
+        $class = $parameter->getClass();
 
-        return $class->getName();
+        return is_null($class) ? $parameter->getName() : $class->getName();
     }
 }

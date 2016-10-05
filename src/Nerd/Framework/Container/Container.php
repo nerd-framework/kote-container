@@ -204,7 +204,7 @@ class Container implements Contracts\Container
     {
         $name = $parameter->getName();
 
-        if (isset($args[$name])) {
+        if (array_key_exists($name, $args)) {
             return $args[$name];
         }
 

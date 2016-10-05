@@ -16,11 +16,20 @@ class ResolverTest extends TestCase
             return new SomeType($id);
         }, SomeType::class);
 
-        $result = $container->invoke(function (SomeType $object) {
+        $container->addResolver(function ($name) {
+            return $name . "bar";
+        }, "foo");
+
+        $result1 = $container->invoke(function (SomeType $object) {
             return $object->id;
         });
 
-        $this->assertEquals("object", $result);
+        $result2 = $container->invoke(function ($foo) {
+            return $foo;
+        });
+
+        $this->assertEquals("object", $result1);
+        $this->assertEquals("foobar", $result2);
     }
 
     public function testResolverCache()
