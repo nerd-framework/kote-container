@@ -149,4 +149,23 @@ class ContainerTest extends TestCase
 
         $this->assertInstanceOf(Container::class, $container);
     }
+
+    public function testArgumentDefaultValue()
+    {
+        $container = new Container();
+        $result = $container->invoke(function ($foo = "bar") {
+            return $foo;
+        });
+        $this->assertEquals("bar", $result);
+    }
+
+    /**
+     * @expectedException \Nerd\Framework\Container\Exceptions\NotFoundException
+     */
+    public function testNotFoundException()
+    {
+        $container = new Container();
+
+        $container->get('something');
+    }
 }
