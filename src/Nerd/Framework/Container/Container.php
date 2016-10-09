@@ -3,7 +3,6 @@
 namespace Nerd\Framework\Container;
 
 use Nerd\Framework\Container\Exceptions\NotFoundException;
-use Nerd\Framework\ContainerContract;
 
 class Container implements ContainerContract
 {
@@ -213,7 +212,7 @@ class Container implements ContainerContract
             return $this->get($name);
         }
 
-        $type = Util::getTypeFromReflectionParameter($parameter);
+        $type = $this->getTypeFromReflectionParameter($parameter);
 
         if ($this->isResolvable($name, $type)) {
             return $this->resolve($name, $type);
@@ -240,5 +239,16 @@ class Container implements ContainerContract
     public static function getInstance()
     {
         return static::$instance;
+    }
+
+    /**
+     * @param \ReflectionParameter $parameter
+     * @return string
+     */
+    protected function getTypeFromReflectionParameter(\ReflectionParameter $parameter)
+    {
+        $class = $parameter->getClass();
+
+        return is_null($class) ? $parameter->getName() : $class->getName();
     }
 }
