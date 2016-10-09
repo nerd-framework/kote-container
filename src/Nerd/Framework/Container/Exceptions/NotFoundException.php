@@ -2,7 +2,7 @@
 
 namespace Nerd\Framework\Container\Exceptions;
 
-class NotFoundException extends \Exception
+class NotFoundException extends ContainerException
 {
     //
 }

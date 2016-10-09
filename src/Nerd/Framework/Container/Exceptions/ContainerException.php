@@ -2,7 +2,9 @@
 
 namespace Nerd\Framework\Container\Exceptions;
 
-class ContainerException extends \Exception
+use Nerd\Framework\Container\ContainerExceptionContract;
+
+class ContainerException extends \Exception implements ContainerExceptionContract
 {
     //
 }

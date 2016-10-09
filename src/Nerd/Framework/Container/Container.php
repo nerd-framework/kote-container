@@ -3,13 +3,14 @@
 namespace Nerd\Framework\Container;
 
 use Nerd\Framework\Container\Exceptions\NotFoundException;
+use Nerd\Framework\ContainerContract;
 
-class Container implements Contracts\Container
+class Container implements ContainerContract
 {
     use ResolverTrait;
 
     /**
-     * @var Contracts\Container
+     * @var ContainerContract
      */
     private static $instance;
 
@@ -226,15 +227,15 @@ class Container implements Contracts\Container
     }
 
     /**
-     * @param Contracts\Container $container
+     * @param ContainerContract $container
      */
-    public static function setInstance(Contracts\Container $container)
+    public static function setInstance(ContainerContract $container)
     {
         static::$instance = $container;
     }
 
     /**
-     * @return Contracts\Container
+     * @return ContainerContract
      */
     public static function getInstance()
     {

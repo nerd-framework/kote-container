@@ -4,9 +4,48 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "86324db20135af9b2bd7d486bd5d2f2f",
-    "content-hash": "3b84b5c7a23182adc8dbb6dcfa87a21c",
-    "packages": [],
+    "hash": "e5570414b5ec6ff50ee2ae1b099ea329",
+    "content-hash": "1342d8129fb9bdb231042dbf098b842d",
+    "packages": [
+        {
+            "name": "nerd-framework/nerd-contracts",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nerd-framework/nerd-contracts.git",
+                "reference": "f443f8befa28059a29775cfc82dc2da6a20d6434"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/nerd-framework/nerd-contracts/zipball/f443f8befa28059a29775cfc82dc2da6a20d6434",
+                "reference": "f443f8befa28059a29775cfc82dc2da6a20d6434",
+                "shasum": ""
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^5.5",
+                "satooshi/php-coveralls": "^1.0",
+                "squizlabs/php_codesniffer": "^2.7"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Roman Lakhtadyr",
+                    "email": "roman.lakhtadyr@gmail.com"
+                }
+            ],
+            "description": "Contracts used in Nerd Framework",
+            "time": "2016-10-08 20:39:41"
+        }
+    ],
     "packages-dev": [
         {
             "name": "doctrine/instantiator",
@@ -1979,9 +2018,11 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "stable",
-    "stability-flags": [],
-    "prefer-stable": false,
+    "minimum-stability": "dev",
+    "stability-flags": {
+        "nerd-framework/nerd-contracts": 20
+    },
+    "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": ">=5.6"
