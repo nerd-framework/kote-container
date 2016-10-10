@@ -36,8 +36,8 @@ class Container implements ContainerContract
      */
     public function get($id)
     {
-        if (!$this->has($id)) {
-            throw new NotFoundException("Resource $id not found in container.");
+        if (!self::has($id)) {
+            throw new NotFoundException("Resource \"$id\" not found in container.");
         }
 
         return call_user_func($this->storage[$id]);
@@ -49,7 +49,7 @@ class Container implements ContainerContract
      */
     public function unbind($id)
     {
-        if ($this->has($id)) {
+        if (self::has($id)) {
             unset($this->storage[$id]);
         }
 
