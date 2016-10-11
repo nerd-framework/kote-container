@@ -142,20 +142,6 @@ class ContainerTest extends TestCase
         $this->assertEquals('bar', $helloWorld->getFoo());
     }
 
-    public function testSettingGlobalInstance()
-    {
-        $container = new Container();
-
-        $container::setInstance($container);
-    }
-
-    public function testGettingGlobalInstance()
-    {
-        $container = Container::getInstance();
-
-        $this->assertInstanceOf(Container::class, $container);
-    }
-
     public function testArgumentDefaultValue()
     {
         $container = new Container();

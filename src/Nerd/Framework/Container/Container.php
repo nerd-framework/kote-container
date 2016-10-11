@@ -6,21 +6,18 @@ use Nerd\Framework\Container\Exceptions\NotFoundException;
 
 class Container implements ContainerContract
 {
-    use ResolverTrait;
-
-    /**
-     * @var ContainerContract
-     */
-    private static $instance;
+    use Traits\ResolverTrait;
 
     /**
      * Storage for all registered services.
      *
-     * @var array
+     * @var callable[]
      */
     private $storage = [];
 
     /**
+     * Check whether service exists in container.
+     *
      * @param $id
      * @return bool
      */
@@ -37,7 +34,7 @@ class Container implements ContainerContract
     public function get($id)
     {
         if (!self::has($id)) {
-            throw new NotFoundException("Resource \"$id\" not found in container.");
+            throw new NotFoundException("Service \"$id\" not found in container.");
         }
 
         return call_user_func($this->storage[$id]);
@@ -57,6 +54,8 @@ class Container implements ContainerContract
     }
 
     /**
+     * Bind resource to given service id.
+     *
      * @param string $id
      * @param mixed $resource
      * @return $this
@@ -71,6 +70,8 @@ class Container implements ContainerContract
     }
 
     /**
+     * Register singleton service.
+     *
      * @param string $id
      * @param null $provider
      * @return $this
@@ -95,6 +96,8 @@ class Container implements ContainerContract
     }
 
     /**
+     * Register factory service.
+     *
      * @param string $id
      * @param null $provider
      * @return $this
@@ -119,17 +122,29 @@ class Container implements ContainerContract
      */
     public function invoke($callable, array $args = [])
     {
-        if (is_array($callable) && count($callable) == 2) {
+        $isClassMethod = function ($callable) {
+            return is_array($callable) && count($callable) == 2;
+        };
+        $isClassName = function ($callable) {
+            return is_string($callable) && class_exists($callable);
+        };
+
+        if ($isClassMethod($callable)) {
             return $this->invokeClassMethod($callable[0], $callable[1], $args);
         }
 
-        if (is_string($callable) && class_exists($callable)) {
+        if ($isClassName($callable)) {
             return $this->invokeClassConstructor($callable, $args);
         }
 
         return $this->invokeFunction($callable, $args);
     }
 
+    /**
+     * @param $function
+     * @param array $args
+     * @return mixed
+     */
     private function invokeFunction($function, array $args = [])
     {
         $reflection = new \ReflectionFunction($function);
@@ -197,12 +212,11 @@ class Container implements ContainerContract
     private function loadDependency(\ReflectionParameter $parameter, array $args)
     {
         $name = $parameter->getName();
+        $class = $parameter->getClass();
 
         if (array_key_exists($name, $args)) {
             return $args[$name];
         }
-
-        $class = $parameter->getClass();
 
         if (isset($class) && $this->has($class->getName())) {
             return $this->get($class->getName());
@@ -212,7 +226,7 @@ class Container implements ContainerContract
             return $this->get($name);
         }
 
-        $type = $this->getTypeFromReflectionParameter($parameter);
+        $type = isset($class) ? $class->getName() : null;
 
         if ($this->isResolvable($name, $type)) {
             return $this->resolve($name, $type);
@@ -222,33 +236,6 @@ class Container implements ContainerContract
             return $parameter->getDefaultValue();
         }
 
-        throw new NotFoundException("Object with id {$parameter->getName()} not found in container.");
-    }
-
-    /**
-     * @param ContainerContract $container
-     */
-    public static function setInstance(ContainerContract $container)
-    {
-        static::$instance = $container;
-    }
-
-    /**
-     * @return ContainerContract
-     */
-    public static function getInstance()
-    {
-        return static::$instance;
-    }
-
-    /**
-     * @param \ReflectionParameter $parameter
-     * @return string
-     */
-    protected function getTypeFromReflectionParameter(\ReflectionParameter $parameter)
-    {
-        $class = $parameter->getClass();
-
-        return is_null($class) ? $parameter->getName() : $class->getName();
+        throw new NotFoundException("Service \"{$parameter->getName()}\" not found in container.");
     }
 }

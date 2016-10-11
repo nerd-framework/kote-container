@@ -18,7 +18,7 @@ class ResolverTest extends TestCase
 
         $container->addResolver(function ($name) {
             return $name . "bar";
-        }, "foo");
+        });
 
         $result1 = $container->invoke(function (SomeType $object) {
             return $object->id;

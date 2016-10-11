@@ -3,8 +3,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/nerd-framework/nerd-container/badge.svg?branch=master)](https://coveralls.io/github/nerd-framework/nerd-container?branch=master)
 [![StyleCI](https://styleci.io/repos/53842620/shield?branch=master)](https://styleci.io/repos/53842620)
 
-Small IoC container with dependency injection.
-
+Container with Dependency Injection for Nerd Framework.
 
 Get the container:
 
@@ -58,10 +57,5 @@ $result = $container->invoke(function ($foo, $a, $b) {
 }, ["a" => "Hello", "b" => "World"]);
 ```
 
-Add resource resolver:
-
-```php
-$container->addResolver(function ($id, $container) {
-    return new $type($id);
-}, SomeClass::class);
-```
+### Resource resolver
+Not documented yet.
