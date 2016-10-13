@@ -134,7 +134,7 @@ class Container implements ContainerContract
     {
         $reflection = new \ReflectionFunction($function);
 
-        $dependencies = $this->getDependencies($reflection->getParameters(), $args);
+        $dependencies = iterator_to_array($this->getDependencies($reflection->getParameters(), $args));
 
         return $function(...$dependencies);
     }
@@ -148,7 +148,7 @@ class Container implements ContainerContract
             return new $class;
         }
 
-        $dependencies = $this->getDependencies($constructor->getParameters(), $args);
+        $dependencies = iterator_to_array($this->getDependencies($constructor->getParameters(), $args));
 
         return new $class(...$dependencies);
     }
@@ -162,7 +162,7 @@ class Container implements ContainerContract
     private function invokeClassMethod($class, $method, array $args = [])
     {
         $function = new \ReflectionMethod($class, $method);
-        $dependencies = $this->getDependencies($function->getParameters(), $args);
+        $dependencies = iterator_to_array($this->getDependencies($function->getParameters(), $args));
 
         if ($function->isStatic()) {
             return $class::$method(...$dependencies);
@@ -178,14 +178,14 @@ class Container implements ContainerContract
     /**
      * @param \ReflectionParameter[] $parameters
      * @param array $args
-     * @return object[]
+     * @return \Generator
      * @throws NotFoundException
      */
     private function getDependencies(array $parameters, array $args = [])
     {
-        return array_map(function ($parameter) use ($args) {
-            return $this->loadDependency($parameter, $args);
-        }, $parameters);
+        foreach ($parameters as $parameter) {
+            yield $this->loadDependency($parameter, $args);
+        }
     }
 
     /**
