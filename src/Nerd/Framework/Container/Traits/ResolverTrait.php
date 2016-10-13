@@ -1,12 +1,12 @@
 <?php
 
-namespace Nerd\Framework\Container;
+namespace Nerd\Framework\Container\Traits;
 
 use Nerd\Framework\Container\Exceptions\NotFoundException;
 
 trait ResolverTrait
 {
-    use ResolversCacheTrait;
+    use ResolverCacheTrait;
 
     /**
      * Array where resolvers stored.

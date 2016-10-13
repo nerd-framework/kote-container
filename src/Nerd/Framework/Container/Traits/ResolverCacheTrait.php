@@ -1,8 +1,8 @@
 <?php
 
-namespace Nerd\Framework\Container;
+namespace Nerd\Framework\Container\Traits;
 
-trait ResolversCacheTrait
+trait ResolverCacheTrait
 {
     /**
      * Cache for resolved resources.
