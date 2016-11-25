@@ -13,12 +13,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nerd-framework/nerd-contracts.git",
-                "reference": "593e64312d77c118b8dc0689bc39675e91bb95f5"
+                "reference": "6951f53c886125f2c59f1cc514ef8af2792b8f7f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nerd-framework/nerd-contracts/zipball/593e64312d77c118b8dc0689bc39675e91bb95f5",
-                "reference": "593e64312d77c118b8dc0689bc39675e91bb95f5",
+                "url": "https://api.github.com/repos/nerd-framework/nerd-contracts/zipball/6951f53c886125f2c59f1cc514ef8af2792b8f7f",
+                "reference": "6951f53c886125f2c59f1cc514ef8af2792b8f7f",
                 "shasum": ""
             },
             "require-dev": {
@@ -43,7 +43,7 @@
                 }
             ],
             "description": "Framework contracts used in Nerd Framework",
-            "time": "2016-11-25 12:20:44"
+            "time": "2016-11-25 13:01:33"
         }
     ],
     "packages-dev": [
