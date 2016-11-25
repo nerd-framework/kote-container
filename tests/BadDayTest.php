@@ -4,6 +4,7 @@ namespace tests;
 
 use Nerd\Framework\Container\Container;
 use PHPUnit\Framework\TestCase;
+use tests\Tools\FooBar;
 
 class BadDayTest extends TestCase
 {
@@ -37,5 +38,14 @@ class BadDayTest extends TestCase
         }, 'something');
         $container->invoke(function ($something) {
         });
+    }
+
+    /**
+     * @expectedException \Nerd\Framework\Container\Exceptions\ContainerException
+     */
+    public function testTryToUseClassNameAsSessionId()
+    {
+        $container = new Container();
+        $container->bind(FooBar::class, 'foobar');
     }
 }

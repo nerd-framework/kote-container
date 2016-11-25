@@ -178,4 +178,21 @@ class ContainerTest extends TestCase
         $this->assertEquals('static', $static);
         $this->assertEquals('instance', $instance);
     }
+
+    public function testArrayAccess()
+    {
+        $container = new Container();
+
+        $this->assertFalse(isset($container['foo']));
+
+        $container['foo'] = 'bar';
+
+        $this->assertTrue(isset($container['foo']));
+
+        $this->assertEquals('bar', $container['foo']);
+
+        unset($container['foo']);
+
+        $this->assertFalse(isset($container['foo']));
+    }
 }
