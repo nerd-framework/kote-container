@@ -33,7 +33,7 @@ class Container implements ContainerContract, \ArrayAccess
      */
     public function alias($serviceId, $classAlias)
     {
-        if (!class_exists($classAlias)) {
+        if (!class_exists($classAlias) && !interface_exists($classAlias)) {
             throw new ContainerException("Class \"$classAlias\" does not exist.");
         }
 
@@ -78,7 +78,7 @@ class Container implements ContainerContract, \ArrayAccess
     {
         if (class_exists($serviceId)) {
             throw new ContainerException(
-                "Do not user class name as service id directly. Use class name alias instead."
+                "Do not use class name as service id directly. Use class name alias instead."
             );
         }
     }
