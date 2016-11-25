@@ -50,7 +50,8 @@ trait ResolverCacheTrait
      * @param $type
      * @return bool
      */
-    protected function cacheContains($id, $type) {
+    protected function cacheContains($id, $type)
+    {
         return isset($this->resolversCache[$type][$id]);
     }
 }
