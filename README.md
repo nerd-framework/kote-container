@@ -15,8 +15,6 @@ Bind class constructor:
 
 ```php
 $container->bind('foo', Foo::class);
-$container->bind(Bar::class);
-$container->bind(Baz::class, BazImplementation::class);
 ```
 
 Bind callable factory:
@@ -37,15 +35,15 @@ Retrieve resources from container:
 
 ```php
 $foo = $container->get('foo');
-$baz = $container->get(Bar::class);
 ```
 
 Invoke function, class method or class constructor with dependency injection:
 
 ```php
-$result = $container->invoke(function ($foo, Bar $other) {
+$result = $container->invoke(function (FooFactoryInterface $factory) {
   // $foo will be injected using parameter name
   // $other will be injected using Bar type hint
+  return $factory->makeFoo();
 });
 ```
 
