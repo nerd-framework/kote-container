@@ -15,11 +15,11 @@ trait ResolverCacheTrait
      * Retrieves data from resolvers cache.
      * Returns data on success or NULL if not found.
      *
-     * @param string|null $type
      * @param string $id
+     * @param string $type
      * @return null|object
      */
-    protected function retrieveFromCache($type, $id)
+    protected function retrieveFromCache($id, $type)
     {
         if (isset($this->resolversCache[$type][$id])) {
             return $this->resolversCache[$type][$id];
@@ -30,12 +30,12 @@ trait ResolverCacheTrait
     /**
      * Stores data into resolvers cache.
      *
-     * @param null|string $type
      * @param string $id
+     * @param string $type
      * @param object $data
      * @return $this
      */
-    protected function storeToCache($type, $id, $data)
+    protected function storeToCache($id, $type, $data)
     {
         if (!isset($this->resolversCache[$type])) {
             $this->resolversCache[$type] = [];
@@ -43,5 +43,15 @@ trait ResolverCacheTrait
         $this->resolversCache[$type][$id] = $data;
 
         return $this;
+    }
+
+    /**
+     * @param $id
+     * @param $type
+     * @return bool
+     */
+    protected function cacheContains($id, $type)
+    {
+        return isset($this->resolversCache[$type][$id]);
     }
 }

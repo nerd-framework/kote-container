@@ -19,10 +19,10 @@ trait ResolverTrait
      * Adds resolver to resolvers array.
      *
      * @param callable $callback
-     * @param null|string $type
+     * @param string $type
      * @return $this
      */
-    public function addResolver($callback, $type = null)
+    public function addResolver($callback, $type = '')
     {
         if (!isset($this->resolvers[$type])) {
             $this->resolvers[$type] = [];
@@ -36,13 +36,13 @@ trait ResolverTrait
      * Resolves resource using resolvers.
      *
      * @param string $id
-     * @param null|string $type
+     * @param string $type
      * @return null|object
      * @throws \Nerd\Framework\Container\Exceptions\NotFoundException
      */
-    protected function resolve($id, $type = null)
+    protected function resolve($id, $type = '')
     {
-        $result = $this->retrieveFromCache($type, $id);
+        $result = $this->retrieveFromCache($id, $type);
 
         if (isset($result)) {
             return $result;
@@ -50,14 +50,15 @@ trait ResolverTrait
 
         if (array_key_exists($type, $this->resolvers)) {
             foreach ($this->resolvers[$type] as $resolver) {
-                if (!is_null($result = $resolver($id, $this))) {
-                    $this->storeToCache($type, $id, $result);
+                $result = $resolver($id, $this);
+                if (!is_null($result)) {
+                    $this->storeToCache($id, $type, $result);
                     return $result;
                 }
             }
         }
 
-        throw new NotFoundException("Resource $id with type $type could not be resolved.");
+        throw new NotFoundException("Item \"$id\" of type \"$type\" could not be resolved.");
     }
 
     /**

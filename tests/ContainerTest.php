@@ -57,11 +57,11 @@ class ContainerTest extends TestCase
         $container->singleton('bar', function () use (&$counter) {
             return ++$counter;
         });
-        $container->singleton(FooBar::class);
+        $container->alias('foo', FooBar::class);
 
         $foo1 = $container->get('foo');
         $foo2 = $container->get('foo');
-        $foo3 = $container->get(FooBar::class);
+        $foo3 = $container->getAlias(FooBar::class);
 
         $this->assertInstanceOf(FooBar::class, $foo1);
         $this->assertInstanceOf(FooBar::class, $foo2);
@@ -86,11 +86,11 @@ class ContainerTest extends TestCase
         $container->factory('bar', function () use (&$counter) {
             return ++$counter;
         });
-        $container->factory(FooBar::class);
+        $container->alias('foo', FooBar::class);
 
         $foo1 = $container->get('foo');
         $foo2 = $container->get('foo');
-        $foo3 = $container->get(FooBar::class);
+        $foo3 = $container->getAlias(FooBar::class);
 
         $this->assertInstanceOf(FooBar::class, $foo1);
         $this->assertInstanceOf(FooBar::class, $foo2);
@@ -156,7 +156,8 @@ class ContainerTest extends TestCase
         $container = new Container();
 
         $container->bind('foo', 'bar');
-        $container->factory(HelloWorld::class);
+        $container->factory('hello', HelloWorld::class);
+        $container->alias('hello', HelloWorld::class);
 
         $bar = $container->invoke(FooBar::class);
 
@@ -166,7 +167,7 @@ class ContainerTest extends TestCase
         $this->assertEquals('bar', $foo);
         $this->assertEquals($other, 10);
 
-        $static = $container->invoke([FooBar::class, 'callStatic']);
+        $static   = $container->invoke([FooBar::class, 'callStatic']);
         $instance = $container->invoke([FooBar::class, 'callInstance']);
 
         $this->assertEquals('static', $static);

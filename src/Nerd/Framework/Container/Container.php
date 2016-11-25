@@ -3,41 +3,109 @@
 namespace Nerd\Framework\Container;
 
 use Nerd\Framework\Container\Exceptions\NotFoundException;
+use Nerd\Framework\Container\Exceptions\ContainerException;
 
-class Container implements ContainerContract
+class Container implements ContainerContract, \ArrayAccess
 {
     use Traits\ResolverTrait;
 
     /**
-     * Storage for all registered services.
+     * Storage of all registered services.
      *
      * @var callable[]
      */
     private $storage = [];
 
     /**
-     * Check whether service exists in container.
+     * Storage of class name service aliases.
      *
-     * @param $id
-     * @return bool
+     * @var array
      */
-    public function has($id)
+    private $classAliases = [];
+
+    /**
+     * Binds class name alias to service id.
+     *
+     * @param $serviceId
+     * @param $classAlias
+     * @return $this
+     * @throws ContainerException
+     */
+    public function alias($serviceId, $classAlias)
     {
-        return array_key_exists($id, $this->storage);
+        if (!class_exists($classAlias)) {
+            throw new ContainerException("Class \"$classAlias\" does not exist.");
+        }
+
+        if (!$this->has($serviceId)) {
+            throw new NotFoundException(
+                "Could not bind class \"$classAlias\" alias to service \"$serviceId\" that does not exist."
+            );
+        }
+
+        $this->classAliases[$classAlias] = $serviceId;
+
+        return $this;
     }
 
     /**
-     * @param $id
+     * Check whether class name alias exists in container.
+     *
+     * @param $classAlias
+     * @return bool
+     */
+    public function hasAlias($classAlias)
+    {
+        return array_key_exists($classAlias, $this->classAliases);
+    }
+
+    /**
+     * @param $classAlias
+     * @return object
+     * @throws NotFoundException
+     */
+    public function getAlias($classAlias)
+    {
+        if ($this->hasAlias($classAlias)) {
+            $serviceId = $this->classAliases[$classAlias];
+            return $this->get($serviceId);
+        }
+
+        throw new NotFoundException("Class alias \"$classAlias\" not found in container.");
+    }
+
+    private function validateServiceId($serviceId)
+    {
+        if (class_exists($serviceId)) {
+            throw new ContainerException(
+                "Do not user class name as service id directly. Use class name alias instead."
+            );
+        }
+    }
+
+    /**
+     * Check whether service exists in container.
+     *
+     * @param $serviceId
+     * @return bool
+     */
+    public function has($serviceId)
+    {
+        return array_key_exists($serviceId, $this->storage);
+    }
+
+    /**
+     * @param $serviceId
      * @return object
      * @throws \Nerd\Framework\Container\Exceptions\NotFoundException
      */
-    public function get($id)
+    public function get($serviceId)
     {
-        if (!self::has($id)) {
-            throw new NotFoundException("Service \"$id\" not found in container.");
+        if ($this->has($serviceId)) {
+            return call_user_func($this->storage[$serviceId]);
         }
 
-        return call_user_func($this->storage[$id]);
+        throw new NotFoundException("Service \"$serviceId\" not found in container.");
     }
 
     /**
@@ -46,7 +114,7 @@ class Container implements ContainerContract
      */
     public function unbind($id)
     {
-        if (self::has($id)) {
+        if ($this->has($id)) {
             unset($this->storage[$id]);
         }
 
@@ -56,13 +124,15 @@ class Container implements ContainerContract
     /**
      * Bind resource to given service id.
      *
-     * @param string $id
+     * @param string $serviceId
      * @param mixed $resource
      * @return $this
      */
-    public function bind($id, $resource)
+    public function bind($serviceId, $resource)
     {
-        $this->storage[$id] = function () use ($resource) {
+        $this->validateServiceId($serviceId);
+
+        $this->storage[$serviceId] = function () use ($resource) {
             return $resource;
         };
 
@@ -72,17 +142,19 @@ class Container implements ContainerContract
     /**
      * Register singleton service.
      *
-     * @param string $id
+     * @param string $serviceId
      * @param null $provider
      * @return $this
      */
-    public function singleton($id, $provider = null)
+    public function singleton($serviceId, $provider = null)
     {
+        $this->validateServiceId($serviceId);
+
         if (is_null($provider)) {
-            $provider = $id;
+            $provider = $serviceId;
         }
 
-        $this->storage[$id] = function () use ($provider) {
+        $this->storage[$serviceId] = function () use ($provider) {
             static $instance = null;
 
             if (is_null($instance)) {
@@ -98,17 +170,19 @@ class Container implements ContainerContract
     /**
      * Register factory service.
      *
-     * @param string $id
+     * @param string $serviceId
      * @param null $provider
      * @return $this
      */
-    public function factory($id, $provider = null)
+    public function factory($serviceId, $provider = null)
     {
+        $this->validateServiceId($serviceId);
+
         if (is_null($provider)) {
-            $provider = $id;
+            $provider = $serviceId;
         }
 
-        $this->storage[$id] = function () use ($provider) {
+        $this->storage[$serviceId] = function () use ($provider) {
             return $this->invoke($provider);
         };
 
@@ -148,12 +222,17 @@ class Container implements ContainerContract
     private function invokeFunction($function, array $args = [])
     {
         $reflection = new \ReflectionFunction($function);
+        $dependencies = $this->getDependencies($reflection->getParameters(), $args);
+        $dependenciesArray = iterator_to_array($dependencies);
 
-        $dependencies = iterator_to_array($this->getDependencies($reflection->getParameters(), $args));
-
-        return $function(...$dependencies);
+        return $function(...$dependenciesArray);
     }
 
+    /**
+     * @param $class
+     * @param array $args
+     * @return mixed
+     */
     private function invokeClassConstructor($class, array $args = [])
     {
         $reflection = new \ReflectionClass($class);
@@ -163,9 +242,10 @@ class Container implements ContainerContract
             return new $class;
         }
 
-        $dependencies = iterator_to_array($this->getDependencies($constructor->getParameters(), $args));
+        $dependencies = $this->getDependencies($constructor->getParameters(), $args);
+        $dependenciesArray = iterator_to_array($dependencies);
 
-        return new $class(...$dependencies);
+        return new $class(...$dependenciesArray);
     }
 
     /**
@@ -177,17 +257,18 @@ class Container implements ContainerContract
     private function invokeClassMethod($class, $method, array $args = [])
     {
         $function = new \ReflectionMethod($class, $method);
-        $dependencies = iterator_to_array($this->getDependencies($function->getParameters(), $args));
+        $dependencies = $this->getDependencies($function->getParameters(), $args);
+        $dependenciesArray = iterator_to_array($dependencies);
 
         if ($function->isStatic()) {
-            return $class::$method(...$dependencies);
+            return $class::$method(...$dependenciesArray);
         }
 
         if (is_string($class) && !$function->isStatic()) {
             $class = $this->invokeClassConstructor($class, $args);
         }
 
-        return $class->$method(...$dependencies);
+        return $class->$method(...$dependenciesArray);
     }
 
     /**
@@ -206,10 +287,11 @@ class Container implements ContainerContract
     /**
      * @param \ReflectionParameter $parameter
      * @param array $args
+     * @param int $parameterIndex
      * @return object
      * @throws NotFoundException
      */
-    private function loadDependency(\ReflectionParameter $parameter, array $args)
+    private function loadDependency(\ReflectionParameter $parameter, array $args = [], $parameterIndex = 0)
     {
         $name = $parameter->getName();
         $class = $parameter->getClass();
@@ -218,15 +300,19 @@ class Container implements ContainerContract
             return $args[$name];
         }
 
-        if (isset($class) && $this->has($class->getName())) {
-            return $this->get($class->getName());
+        if (array_key_exists($parameterIndex, $args)) {
+            return $args[$parameterIndex];
+        }
+
+        if (isset($class) && $this->hasAlias($class->getName())) {
+            return $this->getAlias($class->getName());
         }
 
         if ($this->has($name)) {
             return $this->get($name);
         }
 
-        $type = isset($class) ? $class->getName() : null;
+        $type = isset($class) ? $class->getName() : '';
 
         if ($this->isResolvable($name, $type)) {
             return $this->resolve($name, $type);
@@ -236,6 +322,41 @@ class Container implements ContainerContract
             return $parameter->getDefaultValue();
         }
 
-        throw new NotFoundException("Service \"{$parameter->getName()}\" not found in container.");
+        throw new NotFoundException("Dependency \"{$parameter->getName()}\" could not be injected.");
+    }
+
+    /**
+     * @param mixed $offset
+     * @return bool
+     */
+    public function offsetExists($offset)
+    {
+        return $this->has($offset);
+    }
+
+    /**
+     * @param mixed $offset
+     * @return object
+     */
+    public function offsetGet($offset)
+    {
+        return $this->get($offset);
+    }
+
+    /**
+     * @param mixed $offset
+     * @param mixed $value
+     */
+    public function offsetSet($offset, $value)
+    {
+        $this->bind($offset, $value);
+    }
+
+    /**
+     * @param mixed $offset
+     */
+    public function offsetUnset($offset)
+    {
+        $this->unbind($offset);
     }
 }
