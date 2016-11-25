@@ -131,10 +131,15 @@ class ContainerTest extends TestCase
 
         $this->assertEquals('bar-world-baz', $result);
 
+        $result2 = $container->invoke(function ($first, $second, $third) {
+            return implode('-', func_get_args());
+        }, ['a', 'b', 'c']);
+
+        $this->assertEquals('a-b-c', $result2);
+
         /**
          * @var HelloWorld $helloWorld
          */
-        
         $helloWorld = $container->invoke(HelloWorld::class);
 
         $this->assertInstanceOf(HelloWorld::class, $helloWorld);

@@ -279,8 +279,8 @@ class Container implements ContainerContract, \ArrayAccess
      */
     private function getDependencies(array $parameters, array $args = [])
     {
-        foreach ($parameters as $parameter) {
-            yield $this->loadDependency($parameter, $args);
+        foreach ($parameters as $index => $parameter) {
+            yield $this->loadDependency($parameter, $args, $index);
         }
     }
 
