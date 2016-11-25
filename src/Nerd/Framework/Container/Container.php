@@ -143,16 +143,12 @@ class Container implements ContainerContract, \ArrayAccess
      * Register singleton service.
      *
      * @param string $serviceId
-     * @param null $provider
+     * @param mixed $provider
      * @return $this
      */
-    public function singleton($serviceId, $provider = null)
+    public function singleton($serviceId, $provider)
     {
         $this->validateServiceId($serviceId);
-
-        if (is_null($provider)) {
-            $provider = $serviceId;
-        }
 
         $this->storage[$serviceId] = function () use ($provider) {
             static $instance = null;
@@ -171,16 +167,12 @@ class Container implements ContainerContract, \ArrayAccess
      * Register factory service.
      *
      * @param string $serviceId
-     * @param null $provider
+     * @param mixed $provider
      * @return $this
      */
-    public function factory($serviceId, $provider = null)
+    public function factory($serviceId, $provider)
     {
         $this->validateServiceId($serviceId);
-
-        if (is_null($provider)) {
-            $provider = $serviceId;
-        }
 
         $this->storage[$serviceId] = function () use ($provider) {
             return $this->invoke($provider);
