@@ -19,7 +19,8 @@ trait ResolverTrait
      * Adds resolver to resolvers array.
      *
      * @param callable $callback
-     * @param string $type
+     * @param string   $type
+     *
      * @return $this
      */
     public function addResolver($callback, $type = '')
@@ -37,8 +38,10 @@ trait ResolverTrait
      *
      * @param string $id
      * @param string $type
-     * @return null|object
+     *
      * @throws \Nerd\Framework\Container\Exceptions\NotFoundException
+     *
+     * @return null|object
      */
     protected function resolve($id, $type = '')
     {
@@ -53,6 +56,7 @@ trait ResolverTrait
                 $result = $resolver($id, $this);
                 if (!is_null($result)) {
                     $this->storeToCache($id, $type, $result);
+
                     return $result;
                 }
             }
@@ -64,12 +68,14 @@ trait ResolverTrait
     /**
      * @param $id
      * @param null $type
+     *
      * @return bool
      */
     protected function isResolvable($id, $type = null)
     {
         try {
             $this->resolve($id, $type);
+
             return true;
         } catch (NotFoundException $exception) {
             return false;

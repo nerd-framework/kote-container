@@ -2,8 +2,8 @@
 
 namespace Nerd\Framework\Container;
 
-use Nerd\Framework\Container\Exceptions\NotFoundException;
 use Nerd\Framework\Container\Exceptions\ContainerException;
+use Nerd\Framework\Container\Exceptions\NotFoundException;
 
 class Container implements ContainerContract, \ArrayAccess
 {
@@ -28,8 +28,10 @@ class Container implements ContainerContract, \ArrayAccess
      *
      * @param $serviceId
      * @param $classAlias
-     * @return $this
+     *
      * @throws ContainerException
+     *
+     * @return $this
      */
     public function alias($serviceId, $classAlias)
     {
@@ -52,6 +54,7 @@ class Container implements ContainerContract, \ArrayAccess
      * Check whether class name alias exists in container.
      *
      * @param $classAlias
+     *
      * @return bool
      */
     public function hasAlias($classAlias)
@@ -61,13 +64,16 @@ class Container implements ContainerContract, \ArrayAccess
 
     /**
      * @param $classAlias
-     * @return object
+     *
      * @throws NotFoundException
+     *
+     * @return object
      */
     public function getAlias($classAlias)
     {
         if ($this->hasAlias($classAlias)) {
             $serviceId = $this->classAliases[$classAlias];
+
             return $this->get($serviceId);
         }
 
@@ -78,7 +84,7 @@ class Container implements ContainerContract, \ArrayAccess
     {
         if (class_exists($serviceId)) {
             throw new ContainerException(
-                "Do not use class name as service id directly. Use class name alias instead."
+                'Do not use class name as service id directly. Use class name alias instead.'
             );
         }
     }
@@ -87,6 +93,7 @@ class Container implements ContainerContract, \ArrayAccess
      * Check whether service exists in container.
      *
      * @param $serviceId
+     *
      * @return bool
      */
     public function has($serviceId)
@@ -96,8 +103,10 @@ class Container implements ContainerContract, \ArrayAccess
 
     /**
      * @param $serviceId
-     * @return object
+     *
      * @throws \Nerd\Framework\Container\Exceptions\NotFoundException
+     *
+     * @return object
      */
     public function get($serviceId)
     {
@@ -110,6 +119,7 @@ class Container implements ContainerContract, \ArrayAccess
 
     /**
      * @param $id
+     *
      * @return $this
      */
     public function unbind($id)
@@ -125,7 +135,8 @@ class Container implements ContainerContract, \ArrayAccess
      * Bind resource to given service id.
      *
      * @param string $serviceId
-     * @param mixed $resource
+     * @param mixed  $resource
+     *
      * @return $this
      */
     public function bind($serviceId, $resource)
@@ -143,7 +154,8 @@ class Container implements ContainerContract, \ArrayAccess
      * Register singleton service.
      *
      * @param string $serviceId
-     * @param mixed $provider
+     * @param mixed  $provider
+     *
      * @return $this
      */
     public function singleton($serviceId, $provider)
@@ -167,7 +179,8 @@ class Container implements ContainerContract, \ArrayAccess
      * Register factory service.
      *
      * @param string $serviceId
-     * @param mixed $provider
+     * @param mixed  $provider
+     *
      * @return $this
      */
     public function factory($serviceId, $provider)
@@ -184,6 +197,7 @@ class Container implements ContainerContract, \ArrayAccess
     /**
      * @param $callable
      * @param array $args
+     *
      * @return $this
      */
     public function invoke($callable, array $args = [])
@@ -209,6 +223,7 @@ class Container implements ContainerContract, \ArrayAccess
     /**
      * @param $function
      * @param array $args
+     *
      * @return mixed
      */
     private function invokeFunction($function, array $args = [])
@@ -223,6 +238,7 @@ class Container implements ContainerContract, \ArrayAccess
     /**
      * @param $class
      * @param array $args
+     *
      * @return mixed
      */
     private function invokeClassConstructor($class, array $args = [])
@@ -231,7 +247,7 @@ class Container implements ContainerContract, \ArrayAccess
         $constructor = $reflection->getConstructor();
 
         if (is_null($constructor)) {
-            return new $class;
+            return new $class();
         }
 
         $dependencies = $this->getDependencies($constructor->getParameters(), $args);
@@ -244,6 +260,7 @@ class Container implements ContainerContract, \ArrayAccess
      * @param $class
      * @param $method
      * @param array $args
+     *
      * @return mixed
      */
     private function invokeClassMethod($class, $method, array $args = [])
@@ -265,9 +282,11 @@ class Container implements ContainerContract, \ArrayAccess
 
     /**
      * @param \ReflectionParameter[] $parameters
-     * @param array $args
-     * @return \Generator
+     * @param array                  $args
+     *
      * @throws NotFoundException
+     *
+     * @return \Generator
      */
     private function getDependencies(array $parameters, array $args = [])
     {
@@ -278,10 +297,12 @@ class Container implements ContainerContract, \ArrayAccess
 
     /**
      * @param \ReflectionParameter $parameter
-     * @param array $args
-     * @param int $parameterIndex
-     * @return object
+     * @param array                $args
+     * @param int                  $parameterIndex
+     *
      * @throws NotFoundException
+     *
+     * @return object
      */
     private function loadDependency(\ReflectionParameter $parameter, array $args = [], $parameterIndex = 0)
     {
@@ -319,6 +340,7 @@ class Container implements ContainerContract, \ArrayAccess
 
     /**
      * @param mixed $offset
+     *
      * @return bool
      */
     public function offsetExists($offset)
@@ -328,6 +350,7 @@ class Container implements ContainerContract, \ArrayAccess
 
     /**
      * @param mixed $offset
+     *
      * @return object
      */
     public function offsetGet($offset)

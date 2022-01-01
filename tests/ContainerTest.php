@@ -150,10 +150,10 @@ class ContainerTest extends TestCase
     public function testArgumentDefaultValue()
     {
         $container = new Container();
-        $result = $container->invoke(function ($foo = "bar") {
+        $result = $container->invoke(function ($foo = 'bar') {
             return $foo;
         });
-        $this->assertEquals("bar", $result);
+        $this->assertEquals('bar', $result);
     }
 
     public function testClassConstructorAndMethodCall()
@@ -166,13 +166,13 @@ class ContainerTest extends TestCase
 
         $bar = $container->invoke(FooBar::class);
 
-        list($helloWorld, $foo, $other) = $container->invoke([$bar, "call"]);
+        list($helloWorld, $foo, $other) = $container->invoke([$bar, 'call']);
 
         $this->assertInstanceOf(HelloWorld::class, $helloWorld);
         $this->assertEquals('bar', $foo);
         $this->assertEquals($other, 10);
 
-        $static   = $container->invoke([FooBar::class, 'callStatic']);
+        $static = $container->invoke([FooBar::class, 'callStatic']);
         $instance = $container->invoke([FooBar::class, 'callInstance']);
 
         $this->assertEquals('static', $static);

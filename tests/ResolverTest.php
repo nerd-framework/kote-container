@@ -17,7 +17,7 @@ class ResolverTest extends TestCase
         }, SomeType::class);
 
         $container->addResolver(function ($name) {
-            return $name . "bar";
+            return $name.'bar';
         });
 
         $result1 = $container->invoke(function (SomeType $object) {
@@ -28,8 +28,8 @@ class ResolverTest extends TestCase
             return $foo;
         });
 
-        $this->assertEquals("object", $result1);
-        $this->assertEquals("foobar", $result2);
+        $this->assertEquals('object', $result1);
+        $this->assertEquals('foobar', $result2);
     }
 
     public function testResolverCache()

@@ -17,6 +17,7 @@ trait ResolverCacheTrait
      *
      * @param string $id
      * @param string $type
+     *
      * @return null|object
      */
     protected function retrieveFromCache($id, $type)
@@ -24,6 +25,7 @@ trait ResolverCacheTrait
         if (isset($this->resolversCache[$type][$id])) {
             return $this->resolversCache[$type][$id];
         }
+
         return null;
     }
 
@@ -33,6 +35,7 @@ trait ResolverCacheTrait
      * @param string $id
      * @param string $type
      * @param object $data
+     *
      * @return $this
      */
     protected function storeToCache($id, $type, $data)
@@ -48,6 +51,7 @@ trait ResolverCacheTrait
     /**
      * @param $id
      * @param $type
+     *
      * @return bool
      */
     protected function cacheContains($id, $type)
