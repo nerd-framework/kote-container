@@ -1,6 +1,5 @@
 language: php
 php:
-  - '7.0'
   - '7.4'
   - '8.0'
 
@@ -16,3 +15,7 @@ script: make lint test
 
 after_success:
 - travis_retry composer exec 'coveralls -v'
+
+jobs:
+  allow_failures:
+    - php: 8.0
