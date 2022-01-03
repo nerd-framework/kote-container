@@ -188,7 +188,7 @@ class ContainerTest extends TestCase
         $this->assertEquals(['bar1', 'bar2'], $container->getAll('foo'));
 
         $this->expectException(ContainerException::class);
-        $this->expectExceptionMessage("More than one service");
+        $this->expectExceptionMessage('More than one service');
 
         $container->get('foo');
     }
