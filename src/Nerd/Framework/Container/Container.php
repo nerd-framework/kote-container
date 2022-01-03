@@ -4,15 +4,17 @@ namespace Nerd\Framework\Container;
 
 use Nerd\Framework\Container\Exceptions\NotFoundException;
 use Nerd\Framework\Container\Exceptions\ContainerException;
+use ReflectionException;
+use ReflectionMethod;
 
-class Container implements ContainerContract, \ArrayAccess
+class Container implements ContainerContract
 {
     use Traits\ResolverTrait;
 
     /**
      * Storage of all registered services.
      *
-     * @var callable[]
+     * @var callable[][]
      */
     private $storage = [];
 
@@ -22,6 +24,19 @@ class Container implements ContainerContract, \ArrayAccess
      * @var array
      */
     private $classAliases = [];
+
+    /**
+     * @param $serviceId
+     * @param $factory
+     */
+    private function addFactory($serviceId, $factory)
+    {
+        if (!array_key_exists($serviceId, $this->storage)) {
+            $this->storage[$serviceId] = [];
+        }
+
+        array_push($this->storage[$serviceId], $factory);
+    }
 
     /**
      * Binds class name alias to service id.
@@ -74,6 +89,10 @@ class Container implements ContainerContract, \ArrayAccess
         throw new NotFoundException("Class alias \"$classAlias\" not found in container.");
     }
 
+    /**
+     * @param $serviceId
+     * @throws ContainerException
+     */
     private function validateServiceId($serviceId)
     {
         if (class_exists($serviceId)) {
@@ -94,18 +113,52 @@ class Container implements ContainerContract, \ArrayAccess
         return array_key_exists($serviceId, $this->storage);
     }
 
+
+    /**
+     * Check how many services are bound to given service id in container.
+     *
+     * @param $serviceId
+     * @return bool
+     */
+    public function count($serviceId)
+    {
+        return count($this->storage[$serviceId] ?: []);
+    }
+
     /**
      * @param $serviceId
      * @return object
-     * @throws \Nerd\Framework\Container\Exceptions\NotFoundException
+     * @throws NotFoundException
+     * @throws ContainerException
      */
     public function get($serviceId)
     {
-        if ($this->has($serviceId)) {
-            return call_user_func($this->storage[$serviceId]);
+        if (!$this->has($serviceId)) {
+            throw new NotFoundException("Service \"$serviceId\" not found in container.");
         }
 
-        throw new NotFoundException("Service \"$serviceId\" not found in container.");
+        if ($this->count($serviceId) > 1) {
+            throw new ContainerException("More than one service bound to \"$serviceId\" in container.");
+        }
+
+        return call_user_func($this->storage[$serviceId][0]);
+    }
+
+
+    /**
+     * @param $serviceId
+     * @return object[]
+     * @throws NotFoundException
+     */
+    public function getAll($serviceId)
+    {
+        if (!$this->has($serviceId)) {
+            throw new NotFoundException("Service \"$serviceId\" not found in container.");
+        }
+
+        return array_map(function ($factory) {
+            return call_user_func($factory);
+        }, $this->storage[$serviceId]);
     }
 
     /**
@@ -132,9 +185,9 @@ class Container implements ContainerContract, \ArrayAccess
     {
         $this->validateServiceId($serviceId);
 
-        $this->storage[$serviceId] = function () use ($resource) {
+        $this->addFactory($serviceId, function () use ($resource) {
             return $resource;
-        };
+        });
 
         return $this;
     }
@@ -150,7 +203,7 @@ class Container implements ContainerContract, \ArrayAccess
     {
         $this->validateServiceId($serviceId);
 
-        $this->storage[$serviceId] = function () use ($provider) {
+        $this->addFactory($serviceId, function () use ($provider) {
             static $instance = null;
 
             if (is_null($instance)) {
@@ -158,7 +211,7 @@ class Container implements ContainerContract, \ArrayAccess
             }
 
             return $instance;
-        };
+        });
 
         return $this;
     }
@@ -174,9 +227,9 @@ class Container implements ContainerContract, \ArrayAccess
     {
         $this->validateServiceId($serviceId);
 
-        $this->storage[$serviceId] = function () use ($provider) {
+        $this->addFactory($serviceId, function () use ($provider) {
             return $this->invoke($provider);
-        };
+        });
 
         return $this;
     }
@@ -210,6 +263,7 @@ class Container implements ContainerContract, \ArrayAccess
      * @param $function
      * @param array $args
      * @return mixed
+     * @throws ReflectionException|NotFoundException
      */
     private function invokeFunction($function, array $args = [])
     {
@@ -245,10 +299,11 @@ class Container implements ContainerContract, \ArrayAccess
      * @param $method
      * @param array $args
      * @return mixed
+     * @throws ReflectionException
      */
     private function invokeClassMethod($class, $method, array $args = [])
     {
-        $function = new \ReflectionMethod($class, $method);
+        $function = new ReflectionMethod($class, $method);
         $dependencies = $this->getDependencies($function->getParameters(), $args);
         $dependenciesArray = iterator_to_array($dependencies);
 
@@ -281,7 +336,7 @@ class Container implements ContainerContract, \ArrayAccess
      * @param array $args
      * @param int $parameterIndex
      * @return object
-     * @throws NotFoundException
+     * @throws ContainerException|ReflectionException|NotFoundException
      */
     private function loadDependency(\ReflectionParameter $parameter, array $args = [], $parameterIndex = 0)
     {
@@ -315,40 +370,5 @@ class Container implements ContainerContract, \ArrayAccess
         }
 
         throw new NotFoundException("Dependency \"{$parameter->getName()}\" could not be injected.");
-    }
-
-    /**
-     * @param mixed $offset
-     * @return bool
-     */
-    public function offsetExists($offset)
-    {
-        return $this->has($offset);
-    }
-
-    /**
-     * @param mixed $offset
-     * @return object
-     */
-    public function offsetGet($offset)
-    {
-        return $this->get($offset);
-    }
-
-    /**
-     * @param mixed $offset
-     * @param mixed $value
-     */
-    public function offsetSet($offset, $value)
-    {
-        $this->bind($offset, $value);
-    }
-
-    /**
-     * @param mixed $offset
-     */
-    public function offsetUnset($offset)
-    {
-        $this->unbind($offset);
     }
 }
