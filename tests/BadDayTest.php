@@ -3,35 +3,34 @@
 namespace tests;
 
 use Nerd\Framework\Container\Container;
+use Nerd\Framework\Container\Exceptions\ContainerException;
+use Nerd\Framework\Container\Exceptions\NotFoundException;
 use PHPUnit\Framework\TestCase;
 use tests\Tools\FooBar;
 
 class BadDayTest extends TestCase
 {
-    /**
-     * @expectedException \Nerd\Framework\Container\Exceptions\NotFoundException
-     */
     public function testThatExceptionOccursWhenTryToGetThatNotExists()
     {
+        $this->expectException(NotFoundException::class);
+
         $container = new Container();
         $container->get('foo');
     }
 
-    /**
-     * @expectedException \Nerd\Framework\Container\Exceptions\NotFoundException
-     */
     public function testThatExceptionOccursWhenInvokedFunctionUsesThatNotExists()
     {
+        $this->expectException(NotFoundException::class);
+
         $container = new Container();
         $container->invoke(function ($something) {
         });
     }
 
-    /**
-     * @expectedException \Nerd\Framework\Container\Exceptions\NotFoundException
-     */
     public function testThatExceptionOccursWhenResolverFailed()
     {
+        $this->expectException(NotFoundException::class);
+
         $container = new Container();
         $container->addResolver(function () {
             return null;
@@ -40,11 +39,10 @@ class BadDayTest extends TestCase
         });
     }
 
-    /**
-     * @expectedException \Nerd\Framework\Container\Exceptions\ContainerException
-     */
     public function testTryToUseClassNameAsSessionId()
     {
+        $this->expectException(ContainerException::class);
+
         $container = new Container();
         $container->bind(FooBar::class, 'foobar');
     }

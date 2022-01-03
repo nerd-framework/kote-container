@@ -4,6 +4,7 @@ namespace tests;
 
 use Nerd\Framework\Container\Container;
 use Nerd\Framework\Container\Exceptions\ContainerException;
+use Nerd\Framework\Container\Exceptions\NotFoundException;
 use PHPUnit\Framework\TestCase;
 use tests\Tools\FooBar;
 use tests\Tools\HelloWorld;
@@ -36,12 +37,9 @@ class ContainerTest extends TestCase
         $this->assertFalse($container->has('foo'));
     }
 
-    /**
-     * @expectedException \Nerd\Framework\Container\Exceptions\NotFoundException
-     */
     public function testResourceNotFound()
     {
-        $this->setExpectedExceptionFromAnnotation();
+        $this->expectException(NotFoundException::class);
 
         $container = new Container();
 
