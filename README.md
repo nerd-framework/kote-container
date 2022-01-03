@@ -1,5 +1,5 @@
 # nerd-container
-[![Build Status](https://travis-ci.org/nerd-framework/nerd-container.svg?branch=master)](https://travis-ci.org/nerd-framework/nerd-container)
+[![Build Status](https://app.travis-ci.com/nerd-framework/nerd-container.svg?branch=master)](https://app.travis-ci.com/nerd-framework/nerd-container)
 [![Coverage Status](https://coveralls.io/repos/github/nerd-framework/nerd-container/badge.svg?branch=master)](https://coveralls.io/github/nerd-framework/nerd-container?branch=master)
 [![StyleCI](https://styleci.io/repos/53842620/shield?branch=master)](https://styleci.io/repos/53842620)
 
