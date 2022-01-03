@@ -3,6 +3,7 @@
 namespace tests;
 
 use Nerd\Framework\Container\Container;
+use Nerd\Framework\Container\Exceptions\ContainerException;
 use PHPUnit\Framework\TestCase;
 use tests\Tools\FooBar;
 use tests\Tools\HelloWorld;
@@ -177,5 +178,20 @@ class ContainerTest extends TestCase
 
         $this->assertEquals('static', $static);
         $this->assertEquals('instance', $instance);
+    }
+
+    public function testMultiBind()
+    {
+        $container = new Container();
+
+        $container->bind('foo', 'bar1');
+        $container->bind('foo', 'bar2');
+
+        $this->assertEquals(['bar1', 'bar2'], $container->getAll('foo'));
+
+        $this->expectException(ContainerException::class);
+        $this->expectExceptionMessage("More than one service");
+
+        $container->get('foo');
     }
 }
